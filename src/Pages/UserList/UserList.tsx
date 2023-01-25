@@ -9,6 +9,7 @@ import {
 	TableBody,
 	Avatar,
 } from "@mui/material";
+import { tableCellClasses } from "@mui/material/TableCell";
 import React from "react";
 import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -46,7 +47,7 @@ const columns: readonly Column[] = [
 		minWidth: 170,
 	},
 ];
-
+const br = "border-right: 1px solid rgba(224, 224, 224, 1);"
 function UserList() {
 	const [page, setPage] = React.useState(0);
 	const [pageNum, setPageNum] = React.useState(1);
@@ -87,6 +88,12 @@ function UserList() {
 									{columns.map((column) => (
 										<TableCell
 											key={column.id}
+											sx={{
+												[`& .${tableCellClasses.root}`]: {
+													borderRight:"1px solid rgba(224, 224, 224, 1)",
+													borderBottom:"none"
+												}
+											}}
 											align={column.align}
 											style={{ minWidth: column.minWidth }}
 										>
