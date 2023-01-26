@@ -41,7 +41,7 @@ function Home() {
 	const socket = useRef()
 	const [tableData, setTableData] = useState<ICounter[]>([])
 	useEffect(()=>{
-		const ws = new W3CWebSocket('ws://10.0.10.42:9090/echo/test')
+		const ws = new W3CWebSocket('ws://10.0.10.42:8251/echo/echo')
 		ws.onopen = () =>{
 			console.log("webSocket connected")
 		}
