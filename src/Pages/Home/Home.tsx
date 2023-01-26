@@ -2,24 +2,14 @@ import React, {useEffect, useRef, useState} from "react";
 import useAuth from '../../hooks/use-auth'
 import axios from "axios";
 import {w3cwebsocket as W3CWebSocket} from 'websocket'
-import {
-	Avatar,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TablePagination,
-	TableRow
-} from "@mui/material";
-import {Link} from "react-router-dom";
+import {Paper} from "@mui/material";
+import { Table } from 'antd';
+import type { ColumnsType, TableProps } from 'antd/es/table';
 interface ICounter {
 	codeCmd: null | string,
 	devEui: null| string,
 	freq: null| string,
 	gatewayId: null| string,
-	id: 1| number,
 	nomerShetchika: null| string,
 	obratniyPotok: null| string,
 	potreblenie: null| string,
@@ -31,96 +21,36 @@ interface ICounter {
 	voltageLevel: null| string,
 }
 
-interface Column {
-	id: "codeCmd"
-		| "devEui"
-		| "freq"
-		| "gatewayId"
-		| "nomerShetchika"
-		| "obratniyPotok"
-		| "potreblenie"
-		| "rssi"
-		| "signal"
-		| "snr"
-		| "statusAlarm"
-		| "statusShetchika"
-		| "voltageLevel";
-	label: string;
-	minWidth?: number;
-	align?: "right";
-	format?: (value: number) => string;
-}
-
-const columns: readonly Column[] = [
-	{
-		id: "codeCmd",
-		label: "Код cmd",
-
-	},
-	{
-		id: "devEui",
-		label: "DevEui",
-
-	},
-	{
-		id: "freq",
-		label: "FREQ",
-
-	},
-	{
-		id: "gatewayId",
-		label: "Идентификатор шлюза",
-
-	},
-	{
-		id: "nomerShetchika",
-		label: "Номер счетчика",
-
-	},
-	{
-		id: "obratniyPotok",
-		label: "Обратный поток",
-	},
-	{
-		id: "potreblenie",
-		label: "Потребление",
-
-	},
-	{
-		id: "rssi",
-		label: "RSSI",
-
-	},
-	{
-		id: "signal",
-		label: "Сигнал",
-
-	},{
-		id: "statusAlarm",
-		label: "Сигнал тревоги о состоянии",
-
-	},{
-		id: "statusShetchika",
-		label: "Статус счетчика",
-
-	},{
-		id: "voltageLevel",
-		label: "Уровень напряжения",
-
-	}
+const columns: ColumnsType<ICounter> = [
+	{   dataIndex: "codeCmd", title: "Код cmd"},
+	{   dataIndex: "devEui", title: "DevEui"},
+	{   dataIndex: "freq", title: "FREQ"},
+	{   dataIndex: "gatewayId", title: "Идентификатор шлюза"},
+	{	dataIndex: "nomerShetchika", title: "Номер счетчика"},
+	{	dataIndex: "obratniyPotok", title: "Обратный поток"},
+	{	dataIndex: "potreblenie", title: "Потребление"},
+	{	dataIndex: "rssi", title: "RSSI"},
+	{	dataIndex: "signal", title: "Сигнал"},
+	{	dataIndex: "statusAlarm", title: "Сигнал тревоги о состоянии"},
+	{	dataIndex: "statusShetchika", title: "Статус счетчика"},
+	{	dataIndex: "voltageLevel", title: "Уровень напряжения"}
 ];
+
 function Home() {
 	const {email} = useAuth()
 	const socket = useRef()
 	const [tableData, setTableData] = useState<ICounter[]>([])
 	useEffect(()=>{
-		console.log("issue")
-		const ws = new W3CWebSocket('ws://10.0.10.42:8251/echo/echo')
+		const ws = new W3CWebSocket('ws://10.0.10.42:9090/echo/test')
 		ws.onopen = () =>{
-			console.log("wbsocket connected")
+			console.log("webSocket connected")
 		}
-		ws.onmessage = (mes) =>{
-			console.log(mes.data)
+		ws.onmessage = (mes:any) =>{
+			const res = JSON.parse(mes.data)
+			setTableData((prev)=>[...prev, res])
+		}
+		return () => {
+			ws.close();
 		}
 	},[])
 	useEffect(()=>{
@@ -128,49 +58,16 @@ function Home() {
 			setTableData(value.data)
 		})
 	},[])
-	return <div>
-		<Paper sx={{ width: "100%", overflow: "hidden" }}>
-			<TableContainer sx={{ maxHeight: 440 }}>
-				<Table stickyHeader aria-label="sticky table">
-					<TableHead>
-						<TableRow>
-							{columns.map((column) => (
-								<TableCell
-									key={column.id}
-									align={column.align}
-									//style={{ borderRight:"1px solid rgba(224, 224, 224, 1)"}}
-								>
-									{column.label}
-								</TableCell>
-							))}
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{tableData
-								.map((row) => {
-									return (
-										<TableRow
-											hover
-											role="checkbox"
-											tabIndex={-1}
-											key={row.id}
+	return (
+		<Table
+				pagination={{
+					defaultPageSize: 10
+				}}
 
-										>
-											{columns.map((column) => {
-												const value = row![column?.id!]!;
-												return <TableCell style={{ borderRight:"1px solid rgba(224, 224, 224, 1)"}} key={column.id} align={column.align}>
-														{value}
-													</TableCell>
-											})}
-										</TableRow>
-									);
-								})}
-					</TableBody>
-				</Table>
-			</TableContainer>
-
-		</Paper>
-	</div>;
+				dataSource={tableData}
+				columns={columns}
+			/>
+	)
 }
 
 export default Home;

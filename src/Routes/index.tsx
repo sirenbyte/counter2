@@ -27,22 +27,22 @@ export const RoutesComponent: React.FC = () => {
 	return (
 		<BrowserRouter>
 			<Routes>
-				<Route path="/sign-in" element={<LoginPage />} />
-				<Route path="/sign-up" element={<RegisterPage />} />
+				{/*<Route path="/sign-in" element={<LoginPage />} />*/}
+				{/*<Route path="/sign-up" element={<RegisterPage />} />*/}
 				<Route path="/" element={<MainLayout />}>
 					<Route index element={<Home />} />
-					<Route path="/users" element={<UserList />} />
-					<Route path="/users/:id" element={<ProfileItem />} />
+					{/*<Route path="/users" element={<UserList />} />*/}
+					{/*<Route path="/users/:id" element={<ProfileItem />} />*/}
 
-					{menuList?.map((item) => {
-						return (
-							<Route
-								key={item.pantone_value}
-								path={item.name.split(" ").join("")}
-								element={<ColorItem id={item.id} />}
-							/>
-						);
-					})}
+					{/*{menuList?.map((item) => {*/}
+					{/*	return (*/}
+					{/*		<Route*/}
+					{/*			key={item.pantone_value}*/}
+					{/*			path={item.name.split(" ").join("")}*/}
+					{/*			element={<ColorItem id={item.id} />}*/}
+					{/*		/>*/}
+					{/*	);*/}
+					{/*})}*/}
 					<Route path="*" element={<NotFoundPage />} />
 				</Route>
 			</Routes>
